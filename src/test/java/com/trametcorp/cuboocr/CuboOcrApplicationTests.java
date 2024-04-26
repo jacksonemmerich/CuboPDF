@@ -1,4 +1,4 @@
-package com.trametcorp.cubopdf;
+package com.trametcorp.cuboocr;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

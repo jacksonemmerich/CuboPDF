@@ -7,7 +7,7 @@ RUN apk add --no-cache tesseract-ocr
 
 # Download last language package
 RUN mkdir -p /usr/share/tessdata
-ADD https://github.com/tesseract-ocr/tessdata/blob/main/por.traineddata /usr/share/tessdata/por.traineddata
+ADD https://github.com/tesseract-ocr/tessdata/raw/main/por.traineddata /usr/share/tessdata/por.traineddata
 
 
 # Check the installation status

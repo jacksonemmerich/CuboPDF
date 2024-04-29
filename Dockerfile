@@ -1,35 +1,31 @@
-FROM openjdk:17-jre-alpine AS MAVEN_BUILD
+FROM openjdk:17-jdk-alpine3.14
 
-RUN apk update && apk add --no-cache build-base
+RUN apk update
 
-# Tesseract OCR library
+# Install tesseract library
 RUN apk add --no-cache tesseract-ocr
 
-# Download latest Italian language pack (replace with desired language)
+# Download last language package
 RUN mkdir -p /usr/share/tessdata
 ADD https://github.com/tesseract-ocr/tessdata/blob/main/por.traineddata /usr/share/tessdata/por.traineddata
 
-# Verify installation
+
+# Check the installation status
 RUN tesseract --list-langs
 RUN tesseract -v
 
-# Copy the JAR to a staging directory
-COPY target/*.jar /app.jar
-
-# Final image (slim)
-FROM openjdk:17-alpine3.14
-
-WORKDIR /usr/app
-
-# Copy JAR from builder stage
-COPY --from=builder /app.jar .
-
-# Set environment variables
+# Set the location of the jar
 ENV MICROSERVICE_HOME /usr/microservices
-ENV APP_FILE CuboOCR-0.0.1-SNAPSHOT.jar
 
-# Expose port
+# Set the name of the jar
+ENV APP_FILE CuboPDF-0.0.1-SNAPSHOT.jar
+
+# Open the port
 EXPOSE 8080
 
-# Run the Spring Boot application
-ENTRYPOINT [ "java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "$APP_FILE" ]
+# Copy our JAR
+COPY target/$APP_FILE /app.jar
+
+# Launch the Spring Boot application
+ENV JAVA_OPTS=""
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]

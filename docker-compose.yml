@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  myapp:
+    image: registry-gitlab.portovelho.ro.gov.br/jackson/sia:latest
+    ports:
+      - "41002:8080"
+    volumes:
+      - /docker/prod/siapets/storage:/app/storage
+      #- /docker/prod/siapets/logs:/app/logs # como implementar os logs https://atom-bagel-eab.notion.site/Armazenamento-de-logs-23ecf4092a054c22975120313f840d53?pvs=4
+    environment:
+      - APP_PROFILE=
+      - SMTP_HOST=
+      - SMTP_PORT=
+      - SMTP_USERNAME=
+      - SMTP_PASSWORD=
+      - CLIENT_ID=
+      - CLIENT_SECRET=
+      - JWT_DURATION=
+      - DB_PASSWORD=
+      - DB_URL=
+      - DB_USERNAME=
+      - STORAGE=
+      - CORS_ORIGINS=
+      - REDIS_HOST=
+      - REDIS_PORT=
+      - REDIS_PASSWORD=
+    deploy:
+      replicas: 1  # Em produção aumente o número de réplicas para 4
+      update_config:
+        parallelism: 1
+        delay: 10s
+      resources:
+        limits:
+          cpus: '1'
+          memory: 200M
+        reservations:
+          cpus: '0.01'
+          memory: 10M
+    networks:
+      - siapet-network
+
+  redis:
+    image: redis
+    ports:
+      - "16379:6379"  # Alterando a porta do host para 16379
+    deploy:
+      replicas: 1  # Mantendo apenas 1 réplica para o serviço Redis
+    networks:
+      - siapet-network
+
+networks:
+  siapet-network:
